@@ -1,0 +1,1 @@
+libmo是针对单线程游戏服务器的内存管理库，提供malloc和free接口，以及hook系统api的功能
