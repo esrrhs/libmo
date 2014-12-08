@@ -10,6 +10,16 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\mo.h" />
+    <ClInclude Include="src\moalloc.h" />
+    <ClInclude Include="src\mohook.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\mo.cpp" />
+    <ClCompile Include="src\moalloc.cpp" />
+    <ClCompile Include="src\mohook.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2C80F3A8-3084-41FF-9AFC-564EF2093A32}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -86,18 +96,6 @@
       <AdditionalDependencies>WSOCK32.LIB</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="include\lu.h" />
-    <ClInclude Include="src\circle_buffer.h" />
-    <ClInclude Include="src\lusocket.h" />
-    <ClInclude Include="src\lustack.h" />
-    <ClInclude Include="src\lutypes.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\lu.cpp" />
-    <ClCompile Include="src\lusocket.cpp" />
-    <ClCompile Include="src\lutypes.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
