@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	ProfilerStart("test.prof");
 #endif
 #endif
+    mo_hook();
 
 #ifndef _DEBUG
     for (int i = 0; i < 100000; i++)
@@ -27,8 +28,14 @@ int main(int argc, char *argv[])
         mo_free(p);
         p = mo_calloc(1, i);
         mo_free(p);
+        void * ppp = malloc(32);
+        free(ppp);
+        int * pp = new int[32];
+        delete []pp;
     }
 
+    mo_restore();
+    
 #ifndef WIN32
 #ifndef _DEBUG
 	ProfilerStop();
