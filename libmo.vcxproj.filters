@@ -9,30 +9,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\lu.h">
+    <ClInclude Include="include\mo.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\lusocket.h">
+    <ClInclude Include="src\moalloc.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\lutypes.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\circle_buffer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lustack.h">
+    <ClInclude Include="src\mohook.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\lu.cpp">
+    <ClCompile Include="src\mo.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\lusocket.cpp">
+    <ClCompile Include="src\moalloc.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\lutypes.cpp">
+    <ClCompile Include="src\mohook.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
