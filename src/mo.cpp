@@ -1,5 +1,6 @@
 #include "mo.h"
 #include "moalloc.h"
+#include "mohook.h"
 
 MO_API void * mo_alloc(size_t size)
 {
@@ -29,5 +30,15 @@ MO_API void * mo_memalign(size_t align, size_t size)
 MO_API void * mo_calloc(size_t n, size_t size)
 {
     return fcalloc(n, size);
+}
+
+MO_API void mo_hook()
+{
+    fhook_all_func();
+}
+
+MO_API void mo_restore()
+{
+    frestore_all_func();
 }
 

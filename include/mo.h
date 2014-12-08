@@ -15,3 +15,5 @@ MO_API void * mo_realloc(void * p, size_t size);
 MO_API void * mo_memalign(size_t align, size_t size);
 MO_API void * mo_calloc(size_t n, size_t size);
 
+MO_API void mo_hook();
+MO_API void mo_restore();
