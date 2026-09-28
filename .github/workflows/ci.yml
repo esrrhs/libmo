@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.config.label }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - label: ubuntu-latest · gcc Debug
+            os: ubuntu-latest
+            build_type: Debug
+            cc: gcc
+            cxx: g++
+          - label: ubuntu-latest · gcc Release
+            os: ubuntu-latest
+            build_type: Release
+            cc: gcc
+            cxx: g++
+          - label: ubuntu-24.04 · clang Debug
+            os: ubuntu-24.04
+            build_type: Debug
+            cc: clang
+            cxx: clang++
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+            -DLIBMO_BUILD_TESTS=ON
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure

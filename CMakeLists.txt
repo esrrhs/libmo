@@ -1,18 +1,42 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+cmake_minimum_required(VERSION 3.12)
+project(libmo VERSION 1.1 LANGUAGES CXX)
 
-PROJECT(MO)
-AUX_SOURCE_DIRECTORY(./src MO_SRC_LIST)
-INCLUDE_DIRECTORIES(./include)
-INCLUDE_DIRECTORIES(./src)
-MESSAGE(STATUS "This is cmdcontroller BINARY dir " ${MO_BINARY_DIR})
-MESSAGE(STATUS "This is cmdcontroller SOURCE dir " ${MO_SOURCE_DIR})
-MESSAGE(STATUS "This is cmdcontroller SOURCE file " ${MO_SRC_LIST})
-IF(REMOD)
-SET(CMAKE_CXX_FLAGS "-O3 -Wall -Werror -gdwarf-2 -m64 -DNDEBUG")
-MESSAGE("build release lib")
-ELSE()
-SET(CMAKE_CXX_FLAGS "-g3 -O0 -Wall -Werror -gdwarf-2 -m64 -D_DEBUG")
-MESSAGE("build debug lib")
-ENDIF()
-SET(LIBRARY_OUTPUT_PATH ${MO_BINARY_DIR}/bin)
-ADD_LIBRARY(mo STATIC ${MO_SRC_LIST})
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+option(LIBMO_BUILD_TESTS "Build libmo tests" ON)
+
+add_library(mo STATIC
+    src/mo.cpp
+    src/moalloc.cpp
+    src/mohook.cpp
+)
+
+target_include_directories(mo
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+if(MSVC)
+    target_compile_options(mo PRIVATE /W4)
+else()
+    target_compile_options(mo PRIVATE -Wall -Wextra -Werror)
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_definitions(mo PRIVATE NDEBUG)
+endif()
+
+set_target_properties(mo PROPERTIES
+    OUTPUT_NAME mo
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)
+
+if(LIBMO_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test)
+endif()
