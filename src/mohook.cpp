@@ -7,27 +7,44 @@ uint8_t g_old_realloc_hook_mem[JMP_CODE_LEN];
 uint8_t g_old_memalign_hook_mem[JMP_CODE_LEN];
 uint8_t g_old_calloc_hook_mem[JMP_CODE_LEN];
 
-#ifndef WIN32 
-void *operator new (size_t sz)
+#ifndef _WIN32
+void *operator new(size_t sz)
 {
-    return (void *) malloc (sz ? sz : 1);
+    return std::malloc(sz ? sz : 1);
 }
 
-void *operator new[] (size_t sz)
+void *operator new[](size_t sz)
 {
-    return (void *) malloc (sz ? sz : 1);
+    return std::malloc(sz ? sz : 1);
 }
 
-void operator delete (void *ptr)
+void operator delete(void *ptr) noexcept
 {
-    if (ptr)
-        free(ptr);
+    if (ptr) {
+        std::free(ptr);
+    }
 }
 
-void operator delete[] (void *ptr) throw ()
+void operator delete[](void *ptr) noexcept
 {
-    if (ptr)
-        free(ptr);
+    if (ptr) {
+        std::free(ptr);
+    }
+}
+
+#if __cplusplus >= 201402L
+void operator delete(void *ptr, size_t) noexcept
+{
+    if (ptr) {
+        std::free(ptr);
+    }
+}
+
+void operator delete[](void *ptr, size_t) noexcept
+{
+    if (ptr) {
+        std::free(ptr);
+    }
 }
 #endif
-
+#endif

@@ -1,20 +1,12 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+add_executable(mo_test test.cpp)
+target_link_libraries(mo_test PRIVATE mo)
 
-PROJECT(TEST)
-AUX_SOURCE_DIRECTORY(./ TEST_SRC_LIST)
-INCLUDE_DIRECTORIES(./)
-INCLUDE_DIRECTORIES(../include)
-MESSAGE(STATUS "This is cmdcontroller BINARY dir " ${TEST_BINARY_DIR})
-MESSAGE(STATUS "This is cmdcontroller SOURCE dir " ${TEST_SOURCE_DIR})
-MESSAGE(STATUS "This is cmdcontroller SOURCE file " ${TEST_SRC_LIST})
-LINK_DIRECTORIES(${TEST_SOURCE_DIR}/../bin/)
-IF(REMOD)
-SET(CMAKE_CXX_FLAGS "-O3 -Wall -Werror -gdwarf-2 -m64 -DNDEBUG")
-MESSAGE("build release test")
-ELSE()
-SET(CMAKE_CXX_FLAGS "-g3 -O0 -Wall -Werror -gdwarf-2 -m64 -D_DEBUG")
-MESSAGE("build debug test")
-ENDIF()
-SET(EXECUTABLE_OUTPUT_PATH ${TEST_BINARY_DIR}/../bin)
-ADD_EXECUTABLE(test ${TEST_SRC_LIST})
-TARGET_LINK_LIBRARIES(test mo profiler)
+if(NOT MSVC)
+    target_compile_options(mo_test PRIVATE -Wall -Wextra -Werror)
+endif()
+
+set_target_properties(mo_test PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
+add_test(NAME mo_test COMMAND mo_test)

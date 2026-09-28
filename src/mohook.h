@@ -1,7 +1,7 @@
 #pragma once
 
 // hook
-#ifdef WIN32
+#ifdef _WIN32
 #define JMP_CODE_LEN 5
 #else
 #define JMP_CODE_LEN 12
@@ -9,9 +9,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
-#ifdef WIN32
+#ifdef _WIN32
 #else
+#include <malloc.h>
 #include <unistd.h>
 #endif
 
@@ -21,7 +21,7 @@ extern uint8_t g_old_realloc_hook_mem[JMP_CODE_LEN];
 extern uint8_t g_old_memalign_hook_mem[JMP_CODE_LEN];
 extern uint8_t g_old_calloc_hook_mem[JMP_CODE_LEN];
 
-#ifdef WIN32
+#ifdef _WIN32
 static force_inline bool fhook_func(uint8_t * target_function, uint8_t * newfuc, uint8_t (&old_mem)[JMP_CODE_LEN])
 {
 	DWORD old_target_function_protect = 0;  
@@ -156,7 +156,7 @@ static force_inline bool fhook_all_func()
 	fhook_func((uint8_t*)&free, (uint8_t*)ffree, g_old_free_hook_mem);
 	fhook_func((uint8_t*)&realloc, (uint8_t*)frealloc, g_old_realloc_hook_mem);
 	fhook_func((uint8_t*)&calloc, (uint8_t*)fcalloc, g_old_calloc_hook_mem);
-#ifndef WIN32
+#ifndef _WIN32
 	fhook_func((uint8_t*)&memalign, (uint8_t*)fmemalign, g_old_memalign_hook_mem);
 #endif
     return true;
@@ -168,7 +168,7 @@ static force_inline bool frestore_all_func()
 	frestore_func((uint8_t*)&free, g_old_free_hook_mem);
 	frestore_func((uint8_t*)&realloc, g_old_realloc_hook_mem);
 	frestore_func((uint8_t*)&calloc, g_old_calloc_hook_mem);
-#ifndef WIN32
+#ifndef _WIN32
 	frestore_func((uint8_t*)&memalign, g_old_memalign_hook_mem);
 #endif
     return true;

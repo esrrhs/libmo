@@ -6,13 +6,15 @@
 #include <string.h>
 #include <new>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <sys/mman.h>
 #endif
 
-#ifdef WIN32
+#if defined(__cplusplus) && __cplusplus >= 201103L
+	#define THREAD_LOCAL_VALUE thread_local
+#elif defined(_WIN32)
 	#define THREAD_LOCAL_VALUE __declspec(thread)
 #else
 	#define THREAD_LOCAL_VALUE __thread
@@ -21,7 +23,7 @@
 extern THREAD_LOCAL_VALUE void* g_falloc_instance;
 
 template <typename T>
-void USE(T t) {}
+void USE(T) {}
 
 #define ARRAY_SIZE(a)	\
 	((sizeof(a) / sizeof((*a))) /	\
@@ -47,15 +49,15 @@ const uint32_t c_falloc_pagesize = 4096;
 #define SAFE_DIFFER_TEST_CONTINUE(EXPRESSION, TESTVALUE) if((EXPRESSION) != (TESTVALUE)) continue;
 #define SAFE_DIFFER_TEST_BREAK(EXPRESSION, TESTVALUE) if((EXPRESSION) != (TESTVALUE)) break;
 
-#ifdef WIN32
-#define force_inline __forceinline
+#ifdef _WIN32
+	#define force_inline __forceinline
 #else
 #define force_inline __inline__ __attribute__((always_inline))
 #endif
 
 extern "C" force_inline void * sys_alloc(size_t size)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	void * ret = VirtualAlloc(0, size, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);
 	return ret;
 #else
@@ -66,7 +68,7 @@ extern "C" force_inline void * sys_alloc(size_t size)
 
 extern "C" force_inline void sys_free(void * p, size_t size = 0)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	VirtualFree(p, 0, MEM_RELEASE);
 #else
     munmap(p, size);
@@ -112,7 +114,7 @@ public:
 
 	}
 
-	force_inline void * falloc(size_t size)
+	force_inline void * falloc(size_t /*size*/)
 	{
 		if (empty())
 		{
@@ -425,7 +427,7 @@ extern "C" force_inline void * fcalloc(size_t n, size_t size)
 }
 
 #ifdef USE_FUCK_HOOK
-#ifdef WIN32
+#ifdef _WIN32
 force_inline void * __cdecl operator new(size_t cb)
 {
 	return falloc(cb);
@@ -434,11 +436,11 @@ force_inline void * __cdecl operator new[](size_t cb)
 {
 	return falloc(cb);
 }
-force_inline void __cdecl operator delete(void *p)
+force_inline void __cdecl operator delete(void *p) noexcept
 {
 	ffree(p);
 }
-force_inline void __cdecl operator delete[]( void * p )
+force_inline void __cdecl operator delete[](void *p) noexcept
 {
 	ffree(p);
 }
