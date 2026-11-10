@@ -1,5 +1,8 @@
 add_executable(mo_test test.cpp)
-target_link_libraries(mo_test PRIVATE mo)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(mo_test PRIVATE mo Threads::Threads)
 
 if(NOT MSVC)
     target_compile_options(mo_test PRIVATE -Wall -Wextra -Werror)
