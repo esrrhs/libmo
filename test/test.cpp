@@ -31,7 +31,8 @@ static void check_bytes(const void *p, size_t n, unsigned char seed)
 }
 
 // Touch first, middle, and last bytes so large blocks are checked without
-// writing the entire region.
+// writing the entire region. Write only distinct indices: n==1 keeps a
+// single first-byte pattern, and mid is used only when it is a third slot.
 static void touch_ends(void *p, size_t n, unsigned char seed)
 {
     if (n == 0) {
@@ -39,8 +40,10 @@ static void touch_ends(void *p, size_t n, unsigned char seed)
     }
     unsigned char *b = reinterpret_cast<unsigned char *>(p);
     b[0] = seed;
-    b[n - 1] = static_cast<unsigned char>(seed + 1);
-    if (n >= 3) {
+    if (n > 1) {
+        b[n - 1] = static_cast<unsigned char>(seed + 1);
+    }
+    if (n > 2) {
         b[n / 2] = static_cast<unsigned char>(seed + 2);
     }
 }
@@ -52,8 +55,10 @@ static void check_ends(const void *p, size_t n, unsigned char seed)
     }
     const unsigned char *b = reinterpret_cast<const unsigned char *>(p);
     assert(b[0] == seed);
-    assert(b[n - 1] == static_cast<unsigned char>(seed + 1));
-    if (n >= 3) {
+    if (n > 1) {
+        assert(b[n - 1] == static_cast<unsigned char>(seed + 1));
+    }
+    if (n > 2) {
         assert(b[n / 2] == static_cast<unsigned char>(seed + 2));
     }
 }
